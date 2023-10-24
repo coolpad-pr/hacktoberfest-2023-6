@@ -1,0 +1,50 @@
+Given an array arr[] of N positive integers. Find an integer denoting the maximum XOR subset value in the given array arr[].
+
+Example 1:
+
+Input : 
+N = 3
+arr[] = {2, 4, 5}
+Output : 7
+Explanation : 
+The subset {2, 5} has maximum 
+subset XOR value.
+
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.value = 0
+
+def insert(root, num):
+    node = root
+    for i in range(31, -1, -1):
+        bit = (num >> i) & 1
+        if bit not in node.children:
+            node.children[bit] = TrieNode()
+        node = node.children[bit]
+
+def findMaxXOR(root, num):
+    node = root
+    result = 0
+    for i in range(31, -1, -1):
+        bit = (num >> i) & 1
+        complement = 1 - bit
+        if complement in node.children:
+            result |= (1 << i)
+            node = node.children[complement]
+        else:
+            node = node.children[bit]
+    return result
+
+def findMaximumXOR(arr):
+    root = TrieNode()
+    maxXOR = float('-inf')
+    for num in arr:
+        insert(root, num)
+        maxXOR = max(maxXOR, findMaxXOR(root, num))
+    return maxXOR
+
+# Example usage:
+arr = [2, 4, 5]
+result = findMaximumXOR(arr)
+print(result)  # Output: 7
